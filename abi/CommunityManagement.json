@@ -81,6 +81,17 @@
     {
         "anonymous": false,
         "inputs": [{
+            "indexed": false,
+            "internalType": "address",
+            "name": "newToken",
+            "type": "address"
+        }],
+        "name": "TokenUpdated",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [{
                 "indexed": true,
                 "internalType": "address",
                 "name": "from",
@@ -106,7 +117,7 @@
         "inputs": [],
         "name": "accessControl",
         "outputs": [{
-            "internalType": "contract ProjectSalawatManagement",
+            "internalType": "contract IProjectSalawatManagement",
             "name": "",
             "type": "address"
         }],
@@ -276,6 +287,28 @@
             }
         ],
         "name": "removeMember",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "token",
+        "outputs": [{
+            "internalType": "contract IERC20",
+            "name": "",
+            "type": "address"
+        }],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [{
+            "internalType": "address payable",
+            "name": "newToken",
+            "type": "address"
+        }],
+        "name": "updateToken",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

@@ -9,9 +9,12 @@ router.post('/create', memberController.createMember);
 router.put('/update/:username', memberController.updateMember);
 
 // Delete member
-router.delete('/delete/:username', memberController.deleteMember);
+router.delete('/delete', memberController.deleteMember);
 
 // Get all members created by a builder
 router.get('/by-builder/:builderUsername', memberController.getMembersByBuilder);
+
+// Search member by identifier (username, email, or walletAddress)
+router.post('/search', memberController.searchMember);
 
 module.exports = router;

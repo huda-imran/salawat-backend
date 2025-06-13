@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
 
     role: { type: String, enum: ['admin', 'core', 'builder', 'member'], required: true },
 
-    createdBy: { type: String }, // Username of builder or admin who created this user
+    createdBy: { type: String },
+    communityId: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
