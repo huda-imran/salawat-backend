@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const TokenCountRequest = require('../models/tokenCountRequest.model');
 const { Wallet } = require('ethers');
 const { ethers, JsonRpcProvider } = require('ethers');
 const ProjectSalawatManagementABI = require('../abi/ProjectSalawatManagement.json');
@@ -192,5 +193,37 @@ exports.searchMember = async(req, res) => {
     } catch (err) {
         console.error('❌ Error in searchMember:', err);
         res.status(500).json({ message: 'Failed to search member' });
+    }
+};
+
+// Submit verification count
+exports.submitTokenCount = async(req, res) => {
+    try {
+        const { memberUsername, tokenId, count } = req.body;
+
+        if (!memberUsername || !tokenId || typeof count !== 'number') {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const request = new TokenCountRequest({ memberUsername, tokenId, count });
+        await request.save();
+
+        res.status(201).json({ message: 'Verification count submitted successfully' });
+    } catch (err) {
+        console.error('❌ Error in submitTokenCount:', err);
+        res.status(500).json({ message: 'Failed to submit verification count' });
+    }
+};
+
+// Get verification requests for a member
+exports.getTokenCountRequests = async(req, res) => {
+    try {
+        const { memberUsername } = req.params;
+
+        const requests = await TokenCountRequest.find({ memberUsername });
+        res.json(requests);
+    } catch (err) {
+        console.error('❌ Error in getTokenCountRequests:', err);
+        res.status(500).json({ message: 'Failed to fetch verification requests' });
     }
 };

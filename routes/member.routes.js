@@ -17,4 +17,8 @@ router.get('/by-builder/:builderUsername', memberController.getMembersByBuilder)
 // Search member by identifier (username, email, or walletAddress)
 router.post('/search', memberController.searchMember);
 
+router.post('/submit-verification', memberController.submitTokenCount);
+router.get('/verification-requests/:memberUsername', memberController.getTokenCountRequests);
+
+
 module.exports = router;

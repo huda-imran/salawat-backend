@@ -1,5 +1,6 @@
 const Token = require('../models/token.model');
 const { ethers, JsonRpcProvider } = require('ethers');
+
 require('dotenv').config();
 
 const contractJson = require('../abi/token.json'); // Must include ABI and bytecode
