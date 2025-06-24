@@ -14,9 +14,6 @@ exports.loginUser = async(req, res) => {
             console.warn(`❌ No user found with username "${username}" and role "${role}"`);
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const hashed = await bcrypt.hash(password, 10);
-        console.log(hashed)
-        console.log(`👤 User found: ${user.username}`);
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -27,13 +24,32 @@ exports.loginUser = async(req, res) => {
         const token = generateToken(user._id);
         console.log(`✅ Login successful - Token generated for user "${username}"`);
 
+        let builderUsername = null;
+        let builderWallet = null;
+
+        console.log("Hello")
+        console.log(user.role, user.createdBy);
+
+        if (user.role === 'member' && user.createdBy) {
+            const builder = await User.findOne({ walletAddress: user.createdBy, role: 'builder' });
+            if (builder) {
+                builderUsername = builder.username;
+                builderWallet = builder.walletAddress;
+            }
+        }
+
+        let sent_user = {
+            username: user.username,
+            role: user.role,
+            walletAddress: user.walletAddress,
+            communityId: user.communityId || null,
+            builderUsername,
+            builderWallet
+        }
+        console.log(sent_user)
         res.json({
             token,
-            user: {
-                username: user.username,
-                role: user.role,
-                walletAddress: user.walletAddress,
-            }
+            user: sent_user
         });
     } catch (err) {
         console.error('🔥 Error during loginUser:', err);
