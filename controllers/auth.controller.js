@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const Community = require('../models/community.model');
 const bcrypt = require('bcryptjs');
 const generateToken = require('../utils/generateToken');
 
@@ -26,9 +27,7 @@ exports.loginUser = async(req, res) => {
 
         let builderUsername = null;
         let builderWallet = null;
-
-        console.log("Hello")
-        console.log(user.role, user.createdBy);
+        let communityName = null;
 
         if (user.role === 'member' && user.createdBy) {
             const builder = await User.findOne({ walletAddress: user.createdBy, role: 'builder' });
@@ -38,15 +37,24 @@ exports.loginUser = async(req, res) => {
             }
         }
 
-        let sent_user = {
+        if (user.communityId) {
+            const community = await Community.findOne({ communityId: user.communityId });
+            if (community) {
+                communityName = community.name;
+            }
+        }
+
+        const sent_user = {
             username: user.username,
             role: user.role,
             walletAddress: user.walletAddress,
             communityId: user.communityId || null,
+            communityName,
             builderUsername,
             builderWallet
-        }
-        console.log(sent_user)
+        };
+
+        console.log(sent_user);
         res.json({
             token,
             user: sent_user
