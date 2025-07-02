@@ -155,17 +155,22 @@ exports.getAllBuilders = async(req, res) => {
     }
 };
 
-exports.getCommunities = async(req, res) => {
+exports.getCommunities = async (req, res) => {
     try {
         const { username } = req.params;
-        const builder = await User.findOne({ username });
 
+        const builder = await User.findOne({ username });
         if (!builder) return res.status(404).json({ message: 'Builder not found' });
 
         const communities = await Community.find({ builderWallet: builder.walletAddress });
-        const ids = communities.map(c => c.communityId);
 
-        res.json(ids);
+        // 🧾 Return both ID and name
+        const result = communities.map(c => ({
+            communityId: c.communityId,
+            name: c.name
+        }));
+
+        res.json(result);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Failed to fetch communities' });

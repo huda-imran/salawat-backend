@@ -34,11 +34,25 @@ exports.createCoreMember = async(req, res) => {
 exports.updateCoreMember = async(req, res) => {
     try {
         const { username } = req.params;
-        const update = req.body;
+        let update = {...req.body };
 
-        const updated = await User.findOneAndUpdate({ username }, update, { new: true });
+        // 🔐 If password is present in the update, hash it first
+        if (update.password) {
+            const hashed = await bcrypt.hash(update.password, 10);
+            update.password = hashed;
+        }
+
+        const updated = await User.findOneAndUpdate({ username },
+            update, { new: true }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
         res.json({ success: true, updated });
     } catch (err) {
+        console.error('❌ Error in updateCoreMember:', err);
         res.status(500).json({ success: false, error: err.message });
     }
 };
