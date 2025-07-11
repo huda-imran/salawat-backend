@@ -92,9 +92,15 @@ exports.createBuilder = async(req, res) => {
 exports.updateBuilder = async(req, res) => {
     try {
         const { username } = req.params;
-        const updates = req.body;
+        let update = {...req.body };
 
-        const updatedUser = await User.findOneAndUpdate({ username }, updates, { new: true });
+        // 🔐 If password is present in the update, hash it first
+        if (update.password) {
+            const hashed = await bcrypt.hash(update.password, 10);
+            update.password = hashed;
+        }
+
+        const updatedUser = await User.findOneAndUpdate({ username }, update, { new: true });
         if (!updatedUser) return res.status(404).json({ message: 'Builder not found' });
 
         res.json(updatedUser);

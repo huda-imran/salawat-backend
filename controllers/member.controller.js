@@ -62,9 +62,16 @@ exports.createMember = async(req, res) => {
 exports.updateMember = async(req, res) => {
     try {
         const { username } = req.params;
-        const updates = req.body;
+        let update = {...req.body };
 
-        const updated = await User.findOneAndUpdate({ username, role: 'member' }, updates, { new: true });
+        // 🔐 If password is present in the update, hash it first
+        if (update.password) {
+            const hashed = await bcrypt.hash(update.password, 10);
+            update.password = hashed;
+        }
+
+
+        const updated = await User.findOneAndUpdate({ username, role: 'member' }, update, { new: true });
         if (!updated) return res.status(404).json({ message: 'Member not found' });
 
         res.json(updated);
