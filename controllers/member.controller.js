@@ -212,7 +212,19 @@ exports.submitTokenCount = async(req, res) => {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
-        const request = new TokenCountRequest({ memberUsername, tokenId, count });
+        // Fetch user to get wallet address
+        const user = await User.findOne({ username: memberUsername });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const request = new TokenCountRequest({
+            memberUsername,
+            memberAddress: user.walletAddress, // added this
+            tokenId,
+            count
+        });
+
         await request.save();
 
         res.status(201).json({ message: 'Verification count submitted successfully' });
@@ -221,6 +233,7 @@ exports.submitTokenCount = async(req, res) => {
         res.status(500).json({ message: 'Failed to submit verification count' });
     }
 };
+
 
 // Get verification requests for a member
 exports.getTokenCountRequests = async(req, res) => {
