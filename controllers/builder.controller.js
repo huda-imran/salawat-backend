@@ -41,7 +41,10 @@ exports.createBuilder = async(req, res) => {
 
         // Find the creator core user
         console.log(`🔍 Searching for creator with wallet: ${createdBy}`);
-        const creator = await User.findOne({ username: createdBy, role: 'core' });
+        const creator = await User.findOne({
+            username: createdBy,
+            role: { $in: ['core', 'admin'] }
+            });
 
         if (!creator || !creator.privateKey) {
             console.warn(`🚫 Creator not found or missing privateKey: ${createdBy}`);
