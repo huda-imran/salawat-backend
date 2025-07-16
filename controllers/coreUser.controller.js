@@ -71,11 +71,11 @@ exports.deleteCoreMember = async(req, res) => {
         console.log(`👤 User found: ${user.username} (${user.walletAddress})`);
 
         const provider = new JsonRpcProvider(process.env.RPC_URL);
-        console.log("Hello");
+
         const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
-        console.log("Hello 2");
+
         const contract = new ethers.Contract(CONTRACT_ADDRESS, ProjectSalawatManagementABI, wallet);
-        console.log("Hello 3");
+
         console.log('📨 Sending transaction to remove core member on-chain...');
         const tx = await contract.removeCoreMember(user.walletAddress);
         console.log(`⛓️ Transaction sent: ${tx.hash}`);
@@ -92,6 +92,25 @@ exports.deleteCoreMember = async(req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 };
+
+
+// controllers/core.controller.js
+exports.getCoreMemberByUsername = async(req, res) => {
+    try {
+        const { username } = req.params;
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.json({ success: true, user });
+    } catch (err) {
+        console.error('🔥 Error in getCoreMemberByUsername:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+};
+
 
 
 

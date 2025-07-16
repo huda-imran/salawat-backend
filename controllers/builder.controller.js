@@ -276,3 +276,21 @@ exports.createCommunity = async(req, res) => {
         res.status(500).json({ message: 'Failed to create community', error: err.message });
     }
 };
+
+exports.getBuilderByUsername = async (req, res) => {
+    try {
+        const { username } = req.params;
+
+        // Find the builder by username
+        const builder = await User.findOne({ username, role: 'builder' });
+
+        if (!builder) {
+            return res.status(404).json({ message: 'Builder not found' });
+        }
+
+        res.json(builder);
+    } catch (err) {
+        console.error('🔥 Error in getBuilderByUsername:', err);
+        res.status(500).json({ message: 'Failed to fetch builder', error: err.message });
+    }
+};

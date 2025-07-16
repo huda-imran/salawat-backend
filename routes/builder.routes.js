@@ -9,5 +9,6 @@ router.get('/all', builderController.getAllBuilders);
 router.get('/communities/:username', builderController.getCommunities);
 router.get('/members/:username', builderController.getRegisteredMembers);
 router.post('/create-community', builderController.createCommunity);
+router.get('/:username', builderController.getBuilderByUsername);
 
 module.exports = router;
