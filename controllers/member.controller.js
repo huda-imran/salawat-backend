@@ -157,9 +157,9 @@ exports.searchMember = async(req, res) => {
 
         // 🔐 Find builder and get their wallet address
         const builder = await User.findOne({
-            username: createdBy,
+            username: builderUsername,
             role: { $in: ['builder', 'admin'] }
-            });
+        });
         if (!builder) {
             console.log(`❌ Builder not found: ${builderUsername}`);
             return res.status(404).json({ message: 'Builder not found' });
