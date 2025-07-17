@@ -155,14 +155,50 @@ exports.deleteBuilder = async(req, res) => {
 };
 
 
-exports.getAllBuilders = async(req, res) => {
-    try {
-        const builders = await User.find({ role: 'builder' });
-        res.json(builders);
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to fetch builders' });
+// exports.getAllBuilders = async(req, res) => {
+//     try {
+//         const builders = await User.find({ role: { $in: ['builder', 'admin'] } });
+
+//         res.json(builders);
+//     } catch (err) {
+//         res.status(500).json({ message: 'Failed to fetch builders' });
+//     }
+// };
+
+exports.getAllBuilders = async (req, res) => {
+  try {
+    const { username } = req.params;
+
+    // Find the requester (e.g., admin or core)
+    const requester = await User.findOne({ username });
+    if (!requester) return res.status(404).json({ message: 'User not found' });
+
+    let query = {};
+
+    if (requester.role.includes('admin')) {
+      // Admin: Get all builders they created, plus themselves
+      query = {
+        $or: [
+          { createdBy: requester.walletAddress, role: { $in: ['builder'] } },
+          { username: requester.username } // Include admin's own record
+        ]
+      };
+    } else {
+      // Non-admins (e.g., core): Only fetch builders they created
+      query = {
+        createdBy: requester.walletAddress,
+        role: { $in: ['builder'] }
+      };
     }
+
+    const builders = await User.find(query);
+    res.json(builders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch builders' });
+  }
 };
+
 
 exports.getCommunities = async (req, res) => {
     try {
